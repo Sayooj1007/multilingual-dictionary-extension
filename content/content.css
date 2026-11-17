@@ -71,6 +71,33 @@
     overflow-y: auto;
 }
 
+.dictionary-pronunciation{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+}
+
+.dictionary-syllables{
+    font-size: 15px;
+    font-weight: 600;
+    color: #dedbbd;
+    word-break: break-word;
+}
+
+.dictionary-audio-button{
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 3px 6px;
+    border-radius: 5px;
+}
+
+.dictionary-audio-button:hover{
+    background: #3d3f3c;
+}
+
 .dictionary-popup-definition{
     margin-bottom: 8px;
     font-size: 14px;

@@ -7,7 +7,7 @@
     "permissions": ["storage", "activeTab"],
 
     "host_permissions": [
-        "https://dictionaryapi.dev/*"
+        "https://api.dictionaryapi.dev/*"
     ],
 
     "background": {
@@ -18,6 +18,10 @@
         {
             "matches": ["<all_urls>"],
             "js": [
+                "lib/hypher.js",
+                "lib/en-us.js",
+                "content/syllables.js",
+                "content/languageDetection.js",
                 "content/floatingPopup.js",
                 "content/content.js"],
             "css": ["content/content.css"],

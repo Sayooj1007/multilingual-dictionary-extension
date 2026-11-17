@@ -32,7 +32,7 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) =>{
 
 async function fetchDictionary(word){
 
-    const url = `https://api.dictionaryapi.dev/api/v2/entries/en/${encodeURIComponent(word)}`;
+    const url = `https://freedictionaryapi.com/api/v1/entries/all/${encodeURIComponent(word)}`;
 
     let response;
 
@@ -46,17 +46,31 @@ async function fetchDictionary(word){
         throw new Error("No definiton found for this word.");
     }
 
+    if (response.status == 429){
+        throw new Error("Dictionary API rate limit reached. Try again later.")
+    }
+
     if (!response.ok){
         throw new Error(`Dictionary API error: ${response.status} ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log("word:",data.word);
+    console.table(
+        data.entries.map((entry,index) => ({
+            index: index,
+            langCode: entry.language?.code,
+            langName: entry.language?.name,
+            definition: entry.senses?.[0]?.definition
+        }))
+    );
 
-    if (!Array.isArray(data) || data.length == 0){
+    if (!data || !Array.isArray(data.entries) || data.entries.length == 0){
         throw new Error("No dictionary result found.");
     }
 
     return data;
 }
+
 
 

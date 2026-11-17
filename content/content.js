@@ -1,13 +1,13 @@
 document.addEventListener("dblclick", () => {
     const selection = window.getSelection();
 
-    if(!selection){
+    if(!selection || selection.rangeCount === 0){
         return;
     }
     
     let selectedWord = selection.toString().normalize("NFC");
     selectedWord = selectedWord.replace(/[\u200C\u200D]/g, "");
-    selectedWord = selectedWord.trim();
+    selectedWord = selectedWord.trim().toLowerCase();
 
     if(!selectedWord){
         return;
@@ -16,16 +16,26 @@ document.addEventListener("dblclick", () => {
     if(!/[\p{L}\p{N}]/u.test(selectedWord)){
         return;
     }
+
+    const pageLanguage = getPageLanguage(selection);
+    const languageResult = detectLanguage(selectedWord, pageLanguage);
+
+    console.log("selected word:",selectedWord);
+    console.log("page language:",pageLanguage);
+    console.log("detected script:",detectScript(selectedWord))
+    console.log("detected language:",languageResult);
+
     const range = selection.getRangeAt(0);
     const rect = range.getBoundingClientRect();
 
     showFloatingPopup(selectedWord, rect);
-    console.log("Detected word:", selectedWord)
 
     chrome.runtime.sendMessage(
         {
             type: "LOOKUP_ENGLISH_WORD",
-            word: selectedWord
+            word: selectedWord,
+            languageResult: languageResult,
+            pageLanguage: pageLanguage
         },
 
         function(response){
@@ -40,8 +50,8 @@ document.addEventListener("dblclick", () => {
                 showPopupError(selectedWord, response?.error || "Something went wrong.");
                 return;
             }
-
-            showDictionaryResult(selectedWord, response.data);
+            console.log("complete dictionary entries:",response.data.entries);
+            showDictionaryResult(selectedWord, response.data, languageResult, pageLanguage);
         }
     );
 });
